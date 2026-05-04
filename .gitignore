@@ -1,0 +1,11 @@
+.DS_Store
+.pi/
+.exercises/
+*.log
+
+# Java/Maven build output
+.target/
+target/
+
+# Local Neovim data/workspaces
+java-logic-trainer/workspace/
