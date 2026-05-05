@@ -8,11 +8,20 @@ local ui = require("java-logic-trainer.ui")
 
 local current_exercise = nil
 
+local function close_current_exercise()
+  -- Close the previous exercise before opening another one so LSP clients,
+  -- buffers, and windows from old Maven roots do not accumulate.
+  if current_exercise then
+    workspace.close(current_exercise)
+  end
+end
+
 local function open_exercise(exercise)
   if not exercise then
     ui.notify("There are no pending exercises.")
     return
   end
+  close_current_exercise()
   current_exercise = exercise
   progress.set_last(exercise)
   workspace.open(exercise)
@@ -41,9 +50,12 @@ end
 
 function M.next()
   local p = progress.load()
-  local previous_exercise = current_exercise or (p.lastExercise and exercises.by_id(p.lastExercise))
-  if previous_exercise then
-    workspace.close(previous_exercise)
+  -- If Neovim reloaded the plugin state, close the last persisted exercise too.
+  if not current_exercise and p.lastExercise then
+    local previous_exercise = exercises.by_id(p.lastExercise)
+    if previous_exercise then
+      workspace.close(previous_exercise)
+    end
   end
   open_exercise(exercises.next_pending(p))
 end

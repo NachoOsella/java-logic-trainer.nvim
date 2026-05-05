@@ -97,8 +97,31 @@ function M.create(exercise, opts)
   return p, wrote_solution
 end
 
+local function stop_workspace_lsp_clients(dir)
+  -- Stop LSP clients whose root directory is the exercise workspace.
+  -- This is important for jdtls because each exercise is a different Maven root.
+  if not vim.lsp then
+    return
+  end
+
+  local get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
+  if not get_clients then
+    return
+  end
+
+  for _, client in ipairs(get_clients()) do
+    local root_dir = client.config and client.config.root_dir
+    local client_root = root_dir and vim.fn.fnamemodify(root_dir, ":p") or ""
+    if client_root ~= "" and client_root:sub(1, #dir) == dir then
+      client.stop(true)
+    end
+  end
+end
+
 function M.close(exercise)
   local dir = vim.fn.fnamemodify(M.exercise_dir(exercise), ":p")
+
+  stop_workspace_lsp_clients(dir)
 
   -- Save and unload every buffer that belongs to the exercise workspace.
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
