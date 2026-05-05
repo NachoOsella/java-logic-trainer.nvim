@@ -97,6 +97,24 @@ function M.create(exercise, opts)
   return p, wrote_solution
 end
 
+function M.close(exercise)
+  local dir = vim.fn.fnamemodify(M.exercise_dir(exercise), ":p")
+
+  -- Save and unload every buffer that belongs to the exercise workspace.
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    local name = vim.api.nvim_buf_get_name(buf)
+    local path = name ~= "" and vim.fn.fnamemodify(name, ":p") or ""
+    if path:sub(1, #dir) == dir then
+      if vim.api.nvim_buf_get_option(buf, "modified") then
+        vim.api.nvim_buf_call(buf, function()
+          vim.cmd("silent write")
+        end)
+      end
+      vim.cmd("silent bdelete " .. tostring(buf))
+    end
+  end
+end
+
 function M.open(exercise)
   local p = M.create(exercise)
 

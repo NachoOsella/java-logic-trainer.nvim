@@ -40,7 +40,12 @@ function M.start()
 end
 
 function M.next()
-  open_exercise(exercises.next_pending(progress.load()))
+  local p = progress.load()
+  local previous_exercise = current_exercise or (p.lastExercise and exercises.by_id(p.lastExercise))
+  if previous_exercise then
+    workspace.close(previous_exercise)
+  end
+  open_exercise(exercises.next_pending(p))
 end
 
 function M.check()
