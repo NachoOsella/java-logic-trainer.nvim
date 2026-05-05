@@ -61,10 +61,9 @@ Enable `keymaps = true` in `setup()` to register:
 
 1. Run `:JavaLogicStart`.
 2. Choose `Next pending exercise` or any unlocked exercise.
-3. Neovim opens:
+3. Neovim opens a split screen with:
    - `STATEMENT.md` with the exercise statement.
    - `src/main/java/Exercise.java` as the editable solution file.
-   - `src/test/java/ExerciseTest.java` as a visible read-only test file.
 4. Implement the requested method in `Exercise.java`.
 5. Run `:JavaLogicCheck`.
 6. If the tests pass, the exercise is marked as completed.
@@ -90,7 +89,7 @@ workspace/
         └── test/java/ExerciseTest.java
 ```
 
-The plugin does not overwrite `Exercise.java` when it already exists, so your solutions are not deleted without confirmation. It may regenerate `pom.xml`, `STATEMENT.md`, and tests.
+The plugin does not overwrite `Exercise.java` when it already exists, so your solutions are not deleted without confirmation. It may regenerate `pom.xml`, `STATEMENT.md`, and tests. Test files are kept for the checker, but they are not opened in the exercise layout.
 
 ## Progress
 

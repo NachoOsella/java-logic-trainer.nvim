@@ -65,6 +65,7 @@ function M.maven_pom()
 end
 
 function M.statement(exercise)
+  -- Build a focused statement without exposing tests in the learning view.
   local lines = {
     "# Exercise: " .. exercise.title,
     "",
@@ -73,12 +74,6 @@ function M.statement(exercise)
     "Topic: " .. exercise.topic,
     "",
     exercise.description,
-    "",
-    "## Visible tests",
-    "",
-    "```java",
-    exercise.visible_tests or "",
-    "```",
     "",
     "Useful commands:",
     "- :JavaLogicCheck to run the checker",
@@ -104,14 +99,14 @@ end
 
 function M.open(exercise)
   local p = M.create(exercise)
+
+  -- Open only the statement and the editable Java class in a vertical split.
   vim.cmd("tabnew " .. vim.fn.fnameescape(p.statement))
   vim.bo.filetype = "markdown"
-  vim.cmd("vsplit " .. vim.fn.fnameescape(p.solution))
-  vim.cmd("wincmd l")
-  vim.cmd("botright split " .. vim.fn.fnameescape(p.test))
   vim.bo.modifiable = false
   vim.bo.readonly = true
-  vim.cmd("wincmd k")
+  vim.cmd("vsplit " .. vim.fn.fnameescape(p.solution))
+  vim.cmd("wincmd l")
   return p
 end
 
